@@ -4,7 +4,7 @@
 
 Convert dense clinical trial results, discharge summaries, informed consent forms, and oncology reports into accessible plain language for patients, the general public, or family caregivers — with built-in readability scoring.
 
-Built using the [Anthropic Claude API](https://www.anthropic.com/api), with regulatory alignment to:
+Built using the [Google Gemini API](https://www.gemini.com/api), with regulatory alignment to:
 - EU CTR 536/2014 Article 37 (plain language summaries for clinical trials)
 - FDA 21 CFR 50 Subpart B (informed consent readability)
 - ICH E6(R2) GCP plain language principles
@@ -56,7 +56,7 @@ pip install -r requirements.txt
 ### Set your API key
 
 ```bash
-export ANTHROPIC_API_KEY=your_key_here
+export GEMINI_API_KEY=your_key_here
 ```
 
 ### Python API
@@ -138,7 +138,7 @@ clinical-plain-lang/
 ## Requirements
 
 ```
-anthropic>=0.25.0
+gemini>=0.25.0
 streamlit>=1.32.0
 ```
 
@@ -148,7 +148,7 @@ streamlit>=1.32.0
 
 - This tool is for **informational purposes only**. Plain language summaries produced by this tool do not constitute medical advice.
 - Always review AI-generated plain language output before sharing with patients or caregivers. Human expert review is required for regulatory submissions.
-- The tool does not store or log clinical input. Your data is sent directly to the Anthropic API under their [privacy policy](https://www.anthropic.com/privacy).
+- The tool does not store or log clinical input. Your data is sent directly to the Gemini API under their [privacy policy](https://www.gemini.com/privacy).
 - For regulatory plain language submissions (EU CTR, FDA), output must be reviewed by a qualified plain language specialist.
 
 ---

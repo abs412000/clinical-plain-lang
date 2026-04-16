@@ -2,7 +2,7 @@
 converter.py
 ------------
 Core logic for converting clinical trial / medical documents into
-plain language summaries using the Anthropic Claude API.
+plain language summaries using the Google Gemini API.
 
 Supports three audience levels:
   - patient     : informed patient with disease knowledge, no clinical training
@@ -18,7 +18,8 @@ Regulatory alignment:
 import os
 import re
 import json
-import anthropic
+from google import genai
+from google.genai import types
 
 # ── Audience-specific system prompts ──────────────────────────────────────────
 
@@ -77,9 +78,16 @@ class ClinicalPlainLangConverter:
         print(result["readability"])
     """
 
-    def __init__(self, api_key: str = None, model: str = "claude-sonnet-4-20250514"):
-        self.client = anthropic.Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"))
+    def __init__(self, api_key: str = None, model: str = "gemini-2.5-flash"):
+        self.api_key = api_key or os.environ.get("GEMINI_API_KEY")
+        if not self.api_key:
+            raise ValueError("GEMINI_API_KEY environment variable is not set.")
+
+        # New SDK: instantiate a client (replaces genai.configure())
+        self.client = genai.Client(api_key=self.api_key)
         self.model = model
+        self.temperature = 0.3        # Lower = more consistent & factual
+        self.max_output_tokens = 2048
 
     def convert(self, clinical_text: str, audience: str = "patient") -> dict:
         """
@@ -102,7 +110,8 @@ class ClinicalPlainLangConverter:
 
         system = SYSTEM_PROMPTS[audience]
 
-        user_message = f"""Please convert the following clinical document into a plain language summary 
+        # Combine system + user prompt
+        user_prompt = f"""Please convert the following clinical document into a plain language summary 
 for a {audience} audience. Follow all the guidelines in your instructions exactly.
 
 --- CLINICAL DOCUMENT START ---
@@ -111,15 +120,20 @@ for a {audience} audience. Follow all the guidelines in your instructions exactl
 
 Produce the plain language summary now. Use clear headings as instructed."""
 
-        response = self.client.messages.create(
+        # API call using new google.genai SDK
+        response = self.client.models.generate_content(
             model=self.model,
-            max_tokens=1500,
-            system=system,
-            messages=[{"role": "user", "content": user_message}]
+            contents=user_prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=system,
+                temperature=self.temperature,
+                max_output_tokens=self.max_output_tokens,
+            ),
         )
 
-        plain_text = response.content[0].text
+        plain_text = response.text
 
+        # Readability scoring (unchanged)
         source_stats = readability_stats(clinical_text)
         output_stats = readability_stats(plain_text)
         improvement = round(source_stats["fk_grade"] - output_stats["fk_grade"], 1)
@@ -131,10 +145,9 @@ Produce the plain language summary now. Use clear headings as instructed."""
             "output_stats": output_stats,
             "improvement": improvement,
             "model": self.model,
-            "input_tokens": response.usage.input_tokens,
-            "output_tokens": response.usage.output_tokens,
+            "input_tokens": response.usage_metadata.prompt_token_count if response.usage_metadata else None,
+            "output_tokens": response.usage_metadata.candidates_token_count if response.usage_metadata else None,
         }
-
     def convert_all_audiences(self, clinical_text: str) -> dict:
         """
         Run conversion for all three audience levels in one call.

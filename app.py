@@ -59,10 +59,10 @@ with st.sidebar:
     st.header("⚙️ Settings")
 
     api_key = st.text_input(
-        "Anthropic API Key",
+        "GEMINI API Key",
         type="password",
-        value=os.environ.get("ANTHROPIC_API_KEY", ""),
-        help="Your Anthropic API key. Get one at console.anthropic.com"
+        value=os.environ.get("GEMINI_API_KEY", ""),
+        help="Your Gemini API key. Get one at console.gemini.com"
     )
 
     audience = st.selectbox(
@@ -136,7 +136,7 @@ with col_right:
 
     if convert_btn:
         if not api_key:
-            st.error("Please enter your Anthropic API key in the sidebar.")
+            st.error("Please enter your Gemini API key in the sidebar.")
         elif not clinical_text.strip():
             st.error("Please paste some clinical text to convert.")
         else:

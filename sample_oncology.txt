@@ -1,0 +1,5 @@
+Discharge Summary - Oncology
+Patient: 68-year-old male with stage IIIB non-small cell lung cancer (NSCLC), adenocarcinoma histology, PD-L1 TPS 60%.
+Treatment: Completed 4 cycles of carboplatin-paclitaxel + pembrolizumab (200 mg Q3W) followed by maintenance pembrolizumab.
+Key outcomes: Partial response per RECIST 1.1 (target lesion reduction 42%). No grade 3+ immune-related adverse events. Mild fatigue and grade 2 immune-mediated hypothyroidism managed with levothyroxine.
+Follow-up: Continue pembrolizumab until progression or unacceptable toxicity. Next CT scan in 9 weeks. Discuss clinical trial options for EGFR T790M if progression occurs.
